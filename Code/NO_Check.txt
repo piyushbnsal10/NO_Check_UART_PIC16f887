@@ -1,0 +1,213 @@
+#include<pic.h>
+#include<string.h>
+
+#define LCD PORTD
+#define RS RE0
+#define EN RE1
+
+void DATA();
+void delay(unsigned int x);
+void CMD();
+void latch();
+void check_s();
+
+void main()
+{	
+	char x;
+	TRISD=0x00;
+	PORTD=0x00;
+	
+	TRISE=0x00;
+	ANSEL=0x00;
+	PORTE=0x00;
+	
+	
+	LCD=0X38;
+	CMD();
+	
+	LCD=0X0E;
+	CMD();
+	
+	LCD=0X01;
+	CMD();
+	
+	LCD=0x80;
+	CMD();
+	
+	TRISC=0x80;
+	TXSTA=0x24;
+	RCSTA=0x90;
+	SPBRG=25;
+	
+	char arr1[13],k=0;
+	while(1)
+	{
+	RCIF=0;
+	while(RCIF==0);
+	x=RCREG;
+	arr1[k]=x;
+	k++;
+	if(x==0x0D)
+		break;
+	if(k==13)
+		break;
+	LCD=x;
+	DATA();
+	}
+	
+	check_s();
+	if(k<13)
+	{
+		LCD=0x01;
+						CMD();
+						LCD=0x80;
+						CMD();
+						char check6[]="INCORRECT NO";
+							for(int j=0;j<11;j++)
+							{
+								LCD=check6[j];
+								DATA();
+								delay(10000);
+							}
+		while(1);
+	}
+		
+	
+	int check=0;
+	char arr2[13]={"+917838033015"};
+	for(int i=0;i<13;i++)
+	{
+		check=0;
+		if(arr1[i]!=arr2[i])
+			{
+				check=1;
+				break;
+			}
+	}
+	if(check==0)
+	{
+			LCD=0x01;
+						CMD();
+						LCD=0x80;
+						CMD();
+						char check1[]="HI! PIYUSH";
+							for(int j=0;j<11;j++)
+							{
+								LCD=check1[j];
+								DATA();
+								delay(10000);
+							}
+		while(1);
+	}
+	char arr3[13]={"+911234567899"};
+	for(int i=0;i<13;i++)
+	{
+		check=0;
+		if(arr1[i]!=arr3[i])
+			{
+				check=1;
+				break;
+			}
+	}
+	if(check==0)
+	{
+				LCD=0x01;
+						CMD();
+						LCD=0x80;
+						CMD();
+						char check2[]="HI! RAKESH";
+							for(int j=0;j<11;j++)
+							{
+								LCD=check2[j];
+								DATA();
+								delay(10000);
+							}
+	}
+	char arr4[13]={"+917838033016"};
+	for(int i=0;i<13;i++)
+	{
+		check=0;
+		if(arr1[i]!=arr4[i])
+			{
+				check=1;
+				break;
+			}
+	}
+	if(check==0)
+	{
+				LCD=0x01;
+						CMD();
+						LCD=0x80;
+						CMD();
+						char check3[]="HI! ANKUSH";
+							for(int j=0;j<10;j++)
+							{
+								LCD=check3[j];
+								DATA();
+								delay(10000);
+							}
+		while(1);
+	}
+	if(check==1)
+	{
+			LCD=0x01;
+						CMD();
+						LCD=0x80;
+						CMD();
+						char check4[]="NOT MATCHED";
+							for(int j=0;j<11;j++)
+							{
+								LCD=check4[j];
+								DATA();
+								delay(10000);
+							}
+		while(1);
+	}
+		
+	
+}
+
+void latch()
+{
+	EN=1;
+	delay(100);
+	EN=0;
+	delay(100);
+}
+
+void DATA()
+{
+	RS=1;
+	latch();
+}
+
+void CMD()
+{
+	RS=0;
+	latch();
+}
+void delay(unsigned int x)
+{
+	while(x>0)
+	x--;
+}	
+
+void check_s()
+{
+	char check[]="Checking....";
+	for(int j=0;j<1;j++)
+	{
+		LCD=0x01;
+		CMD();
+		LCD=0x82;
+		CMD();
+		for(int i=0;i<12;i++)
+		{
+			LCD=check[i];
+			DATA();
+			delay(10000);
+		}
+	}
+	delay(10000);
+}
+
